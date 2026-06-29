@@ -1,0 +1,57 @@
+{
+  "name": "3d-spinner-react",
+  "version": "0.1.0",
+  "description": "React bindings for 3d-spinner: a lightweight 3D spinner, loader, and progress indicator as a component and a hook.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc",
+    "typecheck": "tsc --noEmit",
+    "pretest": "npm run build",
+    "test": "node --test tests/*.test.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "spinner",
+    "loader",
+    "loading",
+    "progress",
+    "3d",
+    "react",
+    "react-component",
+    "hook"
+  ],
+  "author": "RuneL",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/runelaang/3d-spinner-react.git"
+  },
+  "homepage": "https://github.com/runelaang/3d-spinner-react#readme",
+  "bugs": {
+    "url": "https://github.com/runelaang/3d-spinner-react/issues"
+  },
+  "peerDependencies": {
+    "3d-spinner": ">=0.9.0",
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "3d-spinner": "^0.9.0",
+    "@types/react": "^18.3.0",
+    "react": "^18.3.0",
+    "typescript": "^5.7.0"
+  }
+}
