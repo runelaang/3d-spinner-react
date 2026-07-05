@@ -92,7 +92,8 @@ function Themed({ color }: { color: string }) {
 ```
 
 See [`3d-spinner`'s docs](https://www.npmjs.com/package/3d-spinner) for the full
-set of animations (`SpinAnimation`, `ObjectMotionAnimation`), shapes, motion
+set of animations (`SpinAnimation`, `ObjectMotionAnimation`, `ChargedOrbAnimation`,
+`GridAssemblyAnimation`, `ParticlesAnimation`), shapes, motion
 paths, and rendering backends.
 
 ## The `useSpinner` hook

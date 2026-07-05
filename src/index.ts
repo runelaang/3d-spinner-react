@@ -13,4 +13,6 @@ export type {
   SpinnerOptions,
   SpinnerAnimation,
   AnimationFrame,
+  AnimationLabel,
+  CompositeAnimationLayer,
 } from "3d-spinner";
