@@ -16,7 +16,7 @@ cleanup, and progress. Import the animations and prefabs you need from
 npm install 3d-spinner-react 3d-spinner react
 ```
 
-`3d-spinner` (>=0.9.3) and `react` (18+) are peer dependencies.
+`3d-spinner` (>=0.9.5) and `react` (18+) are peer dependencies.
 
 ## Screenshots
 
@@ -194,8 +194,8 @@ Each animation is imported from its own subpath:
 | `3d-spinner/animations/grid-assembly` | `GridAssemblyAnimation` | Grid pieces that assemble with progress. |
 
 Shapes exported from `3d-spinner/engines/little-3d-engine` include `cube`,
-`tetrahedron`, `octahedron`, `pyramid`, `quad`, and several spheres (`uvSphere`,
-`icosphere`, `octaSphere`, `cubeSphere`).
+`tetrahedron`, `octahedron`, `pyramid`, `quad`, `planeMesh`, and several spheres
+(`uvSphere`, `icosphere`, `octaSphere`, `cubeSphere`).
 
 ## The `useSpinner` hook
 
