@@ -1,6 +1,6 @@
 {
   "name": "3d-spinner-react",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "React bindings for 3d-spinner: a lightweight 3D spinner, loader, and progress indicator as a component and a hook.",
   "type": "module",
   "main": "./dist/index.js",
