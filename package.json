@@ -45,12 +45,12 @@
     "url": "https://github.com/runelaang/3d-spinner-react/issues"
   },
   "peerDependencies": {
-    "3d-spinner": ">=0.9.3",
+    "3d-spinner": ">=0.9.5",
     "react": ">=18"
   },
   "devDependencies": {
     "@types/react": "^18.3.0",
-    "3d-spinner": "^0.9.3",
+    "3d-spinner": "^0.9.5",
     "jsdom": "^29.1.1",
     "react": "^18.3.0",
     "react-dom": "^18.3.1",
