@@ -16,7 +16,7 @@ cleanup, and progress. Import the animations and prefabs you need from
 npm install 3d-spinner-react 3d-spinner react
 ```
 
-`3d-spinner` (>=0.9.5) and `react` (18+) are peer dependencies.
+`3d-spinner` (>=0.9.9) and `react` (18+) are peer dependencies.
 
 ## Screenshots
 
@@ -191,7 +191,10 @@ Each animation is imported from its own subpath:
 | `3d-spinner/animations/object-motion` | `ObjectMotionAnimation` | A mesh that follows a motion path, with an intro/outro you choose. |
 | `3d-spinner/animations/particles` | `ParticlesAnimation` | Camera-facing billboard particles: burst, fountain, snow, confetti. |
 | `3d-spinner/animations/charged-orb` | `ChargedOrbAnimation` | Progress-driven orb with satellite pop-outs. |
+| `3d-spinner/animations/ghost-train` | `GhostTrainAnimation` | Progress story: translucent train gains a car per 2%, then blasts off. |
 | `3d-spinner/animations/grid-assembly` | `GridAssemblyAnimation` | Grid pieces that assemble with progress. |
+| `3d-spinner/animations/rocket-launch` | `RocketLaunchAnimation` | Progress story: rockets line up on the pad, then blast off at 100%. |
+| `3d-spinner/composite-animation` | `CompositeAnimation` | Several animations as layers (how the prefabs combine effects). |
 
 Shapes exported from `3d-spinner/engines/little-3d-engine` include `cube`,
 `tetrahedron`, `octahedron`, `pyramid`, `quad`, `planeMesh`, and several spheres
