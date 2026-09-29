@@ -1,0 +1,28 @@
+# Changelog
+
+Notable changes, newest first. Versions before 1.0.0 are described in the git history.
+
+## 1.0.0
+
+Requires `3d-spinner` 1.x. The public interface is stable from this version on and follows
+semantic versioning: breaking changes only come with a new major version.
+
+### Changed
+
+- The `timeout` option is now `timeoutMs`, matching `3d-spinner` 1.0.0, which removed
+  `timeout`. Rename the prop on `<Spinner>` and the option passed to `useSpinner`.
+- The `3d-spinner` peer dependency is `^1.0.0` (was `>=0.9.9`).
+- Mounting the same animation instance twice now throws, because `3d-spinner` treats animations
+  as single-use. A bare instance passed as `animation` therefore throws when the spinner
+  rebuilds (a structural prop change, or React StrictMode). Pass a factory
+  (`() => new SpinAnimation()`) instead.
+
+### Added
+
+- `ariaLabel` option: the accessible name of the spinner's progress bar. Default `"Loading"`.
+  Changing it rebuilds the spinner.
+
+### Internal
+
+- The lifecycle rebuild test uses an animation factory, since an instance can no longer be
+  mounted twice.
