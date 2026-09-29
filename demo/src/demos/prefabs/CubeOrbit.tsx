@@ -3,9 +3,10 @@ import { cube } from "3d-spinner/engines/little-3d-engine";
 import { circleMotion } from "3d-spinner/motion";
 import { crystalComet } from "3d-spinner/prefabs";
 
-export default function CubeOrbit() {
+export default function CubeOrbit({ show }: { show: boolean }) {
   return (
     <Spinner
+      show={show}
       type="indeterminate"
       animation={() =>
         crystalComet({

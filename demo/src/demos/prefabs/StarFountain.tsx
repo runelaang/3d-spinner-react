@@ -1,9 +1,10 @@
 import { Spinner } from "3d-spinner-react";
 import { pulsingStarfield } from "3d-spinner/prefabs";
 
-export default function StarFountain() {
+export default function StarFountain({ show }: { show: boolean }) {
   return (
     <Spinner
+      show={show}
       type="indeterminate"
       animation={() =>
         pulsingStarfield({

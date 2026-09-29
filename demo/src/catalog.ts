@@ -66,6 +66,11 @@ export const PREFABS: Demo[] = [
 
 export const PATTERNS: Demo[] = [
   demo(
+    "patterns/ShowVersusUnmount",
+    "show versus unmount",
+    "Both spinners stop when loading finishes. The left one is rendered conditionally and vanishes at once. The right one uses show: it plays its outro, calls onFinish, then removes itself.",
+  ),
+  demo(
     "patterns/ProgressFromState",
     "Progress from state",
     "Drag the slider. A new progress prop calls setProgress without rebuilding the spinner. At 100% the outro plays and the spinner stops; mount it again to start over.",
@@ -83,7 +88,7 @@ export const PATTERNS: Demo[] = [
   demo(
     "patterns/WhileLoading",
     "Show while loading",
-    "Render the spinner only while loading. Unmounting it destroys the spinner and removes its canvas.",
+    "show={loading} shows the spinner while the request runs. When it ends, the outro plays and the spinner removes itself.",
   ),
   demo(
     "patterns/RebuildWithDeps",

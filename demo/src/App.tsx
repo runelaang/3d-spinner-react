@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { DemoCard, ProgressCard, type Live } from "./cards";
+import { MountCard, ProgressCard, ShowCard, type CardState } from "./cards";
 import { PATTERNS, PREFABS, PROGRESS_PREFABS } from "./catalog";
 import { useTheme } from "./theme";
 
@@ -32,10 +32,14 @@ function usePage() {
 export function App() {
   const page = usePage();
   const theme = useTheme();
-  const [live, setLive] = useState<Live | null>(null);
-  const play = (id: string) => setLive((current) => ({ id, run: (current?.run ?? 0) + 1 }));
+  const [live, setLive] = useState<string | null>(null);
+  const [runs, setRuns] = useState<Record<string, number>>({});
+  const play = (id: string) => {
+    setLive(id);
+    setRuns((current) => ({ ...current, [id]: (current[id] ?? 0) + 1 }));
+  };
   const stop = () => setLive(null);
-  const cards = { live, play, stop };
+  const cards: CardState = { live, runs, play, stop };
 
   useEffect(() => setLive(null), [page]);
 
@@ -83,12 +87,12 @@ export function App() {
             Each prefab comes with a complete animation. Pass its <code>animation</code> to{" "}
             <code>&lt;Spinner&gt;</code> as a factory; spinner options such as{" "}
             <code>periodMs</code> and <code>loop</code> go on <code>&lt;Spinner&gt;</code> itself.
-            Play mounts the component and Stop unmounts it, which destroys the spinner. One card
-            plays at a time.
+            Stop sets <code>show</code> to <code>false</code>: the outro plays, then the spinner
+            removes itself. One card plays at a time; starting another one hides the current one.
           </p>
           <div className="spinner-grid prefab-grid">
             {PREFABS.map((demo) => (
-              <DemoCard key={demo.id} demo={demo} {...cards} />
+              <ShowCard key={demo.id} demo={demo} {...cards} />
             ))}
           </div>
         </>
@@ -98,20 +102,16 @@ export function App() {
         <>
           <h1>3d-spinner-react: React patterns</h1>
           <p className="note">
-            Everyday React usage: progress from state, props that rebuild the spinner, mounting
-            while loading, and the imperative handle. Shapes, shading, motion paths, and particles
+            Everyday React usage: progress from state, props that rebuild the spinner, showing a
+            spinner while loading, and the imperative handle. Unmount on these cards removes the
+            component at once, like any unmount; the first card compares that with
+            <code>show</code>, which plays the outro first. Shapes, shading, motion paths, and particles
             are shown in the <a href={ENGINE_DEMO}>3d-spinner demo</a>; in React only the line
             that mounts the spinner differs.
           </p>
           <div className="spinner-grid">
             {PATTERNS.map((demo) => (
-              <DemoCard
-                key={demo.id}
-                demo={demo}
-                labels={["Mount", "Unmount"]}
-                controls
-                {...cards}
-              />
+              <MountCard key={demo.id} demo={demo} {...cards} />
             ))}
           </div>
         </>

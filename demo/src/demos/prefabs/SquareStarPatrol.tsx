@@ -2,9 +2,10 @@ import { Spinner } from "3d-spinner-react";
 import { squareMotion } from "3d-spinner/motion";
 import { starSwarm } from "3d-spinner/prefabs";
 
-export default function SquareStarPatrol() {
+export default function SquareStarPatrol({ show }: { show: boolean }) {
   return (
     <Spinner
+      show={show}
       type="indeterminate"
       loop="restart"
       animation={() =>

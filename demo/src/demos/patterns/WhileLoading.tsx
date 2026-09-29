@@ -23,16 +23,14 @@ export default function WhileLoading() {
         <button onClick={load} disabled={loading}>
           Load data
         </button>
+        <output>{loading ? "Loading..." : loads ? `Data loaded (${loads}x)` : "Nothing loaded yet"}</output>
       </div>
-      {loading ? (
-        <Spinner
-          type="indeterminate"
-          animation={() => starSwarm({ label: "Fetching data" }).animation}
-          style={{ width: "100%", height: 240 }}
-        />
-      ) : (
-        <p>{loads ? `Data loaded (${loads}x).` : "Nothing loaded yet."}</p>
-      )}
+      <Spinner
+        show={loading}
+        type="indeterminate"
+        animation={() => starSwarm({ label: "Fetching data" }).animation}
+        style={{ width: "100%", height: 240 }}
+      />
     </>
   );
 }

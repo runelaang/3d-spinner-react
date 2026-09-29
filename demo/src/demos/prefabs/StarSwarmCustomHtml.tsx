@@ -10,9 +10,10 @@ function message() {
   return element;
 }
 
-export default function StarSwarmCustomHtml() {
+export default function StarSwarmCustomHtml({ show }: { show: boolean }) {
   return (
     <Spinner
+      show={show}
       type="indeterminate"
       animation={() => starSwarm({ label: message() }).animation}
       style={{ width: "100%", height: "100%" }}

@@ -1,9 +1,10 @@
 import { Spinner } from "3d-spinner-react";
 import { planeStarTrail } from "3d-spinner/prefabs";
 
-export default function IceBluePlaneTrail() {
+export default function IceBluePlaneTrail({ show }: { show: boolean }) {
   return (
     <Spinner
+      show={show}
       type="indeterminate"
       periodMs={3200}
       animation={() =>
