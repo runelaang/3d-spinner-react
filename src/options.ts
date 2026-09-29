@@ -31,6 +31,13 @@ export interface SpinnerConfig {
   periodMs?: number;
   /** Accessible name of the spinner's progress bar for assistive technology. Default `"Loading"`. */
   ariaLabel?: string;
+  /**
+   * Called when the spinner stops animating while it is still mounted: its outro
+   * finished (after `stop()`, progress reaching 1, `timeoutMs`, `until`, or
+   * `show` turning `false`), it was stopped before its intro, or it could not
+   * start. Not called when the spinner is unmounted or rebuilt.
+   */
+  onFinish?: () => void;
 }
 
 /** Resolve an {@link AnimationSource} to a concrete instance, calling the factory if given one. */

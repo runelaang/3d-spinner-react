@@ -294,3 +294,211 @@ test("<Spinner> destroys the animation when unmounted", async () => {
 
 // Make flushRaf available so future tests can trigger animation frames if needed.
 export { flushRaf };
+
+// ── Playing the outro before unmounting (show, onFinish, stop() promise) ──────
+
+// Finishes its outro on the first frame after exit(), like a very short real outro.
+class OutroAnimation extends MockAnimation {
+  constructor() {
+    super();
+    this.exited = false;
+  }
+  exit(now)    { super.exit(now); this.exited = true; }
+  isFinished() { return this.exited; }
+}
+
+function outroFactory() {
+  const anims = [];
+  const factory = () => {
+    const anim = new OutroAnimation();
+    anims.push(anim);
+    return anim;
+  };
+  return { anims, factory };
+}
+
+function renderSpinner() {
+  const container = makeContainer();
+  const root      = createRoot(container);
+  return {
+    container,
+    render:  (props) => act(async () => { root.render(createElement(Spinner, props)); }),
+    frame:   () => act(async () => { flushRaf(); }),
+    unmount: async () => {
+      await act(async () => { root.unmount(); });
+      container.remove();
+    },
+  };
+}
+
+test("<Spinner show={false}> plays the outro, then removes its host div", async () => {
+  const { anims, factory } = outroFactory();
+  const view  = renderSpinner();
+  const props = { type: "indeterminate", animation: factory };
+
+  await view.render({ ...props, show: true });
+  await view.frame();
+  assert.ok(anims[0].calls.includes("enter"), "intro did not start");
+
+  await view.render({ ...props, show: false });
+  assert.ok(anims[0].calls.includes("exit"), "outro did not start");
+  assert.equal(view.container.firstChild?.tagName, "DIV", "host removed before the outro finished");
+  assert.ok(!anims[0].calls.includes("destroy"), "destroyed before the outro finished");
+
+  await view.frame();
+  assert.equal(view.container.firstChild, null, "host still there after the outro");
+  assert.ok(anims[0].calls.includes("destroy"), "not destroyed after the outro");
+
+  await view.unmount();
+});
+
+test("<Spinner show={false}> before the intro removes the host at once", async () => {
+  const { anims, factory } = outroFactory();
+  const view  = renderSpinner();
+  const props = { type: "progress", animation: factory };
+
+  await view.render({ ...props, show: true });
+  await view.render({ ...props, show: false });
+
+  assert.equal(view.container.firstChild, null, "host still there");
+  assert.ok(!anims[0].calls.includes("exit"), "an outro played without an intro");
+
+  await view.unmount();
+});
+
+test("<Spinner> with show={false} from the start renders nothing until show turns true", async () => {
+  const { anims, factory } = outroFactory();
+  const view  = renderSpinner();
+  const props = { type: "indeterminate", animation: factory };
+
+  await view.render({ ...props, show: false });
+  assert.equal(view.container.firstChild, null);
+  assert.equal(anims.length, 0, "an animation was built while hidden");
+
+  await view.render({ ...props, show: true });
+  assert.equal(view.container.firstChild?.tagName, "DIV");
+  assert.equal(anims.length, 1);
+
+  await view.unmount();
+});
+
+test("<Spinner> shown again after its outro mounts a fresh animation", async () => {
+  const { anims, factory } = outroFactory();
+  const view  = renderSpinner();
+  const props = { type: "indeterminate", animation: factory };
+
+  await view.render({ ...props, show: true });
+  await view.frame();
+  await view.render({ ...props, show: false });
+  await view.frame();
+  assert.equal(view.container.firstChild, null);
+
+  await view.render({ ...props, show: true });
+  assert.equal(anims.length, 2, "no fresh animation");
+  assert.ok(anims[1].calls.includes("mount"), "fresh animation not mounted");
+
+  await view.unmount();
+});
+
+test("<Spinner> shown again during its outro restarts with a fresh animation", async () => {
+  const { anims, factory } = outroFactory();
+  const view  = renderSpinner();
+  const props = { type: "indeterminate", animation: factory };
+
+  await view.render({ ...props, show: true });
+  await view.frame();
+  await view.render({ ...props, show: false });
+  await view.render({ ...props, show: true });
+
+  assert.equal(anims.length, 2, "no fresh animation");
+  assert.ok(anims[0].calls.includes("destroy"), "the exiting animation was kept");
+  assert.equal(view.container.childElementCount, 1, "expected exactly one host div");
+
+  await view.frame();
+  assert.equal(view.container.firstChild?.tagName, "DIV", "the restarted spinner was removed");
+
+  await view.unmount();
+});
+
+test("handle.stop() resolves after the outro and onFinish runs once, not on unmount", async () => {
+  const { factory } = outroFactory();
+  const view     = renderSpinner();
+  const handle   = createRef();
+  let finishes   = 0;
+  let stopped    = false;
+
+  await view.render({
+    ref:       handle,
+    type:      "indeterminate",
+    animation: factory,
+    onFinish:  () => { finishes++; },
+  });
+  await view.frame();
+
+  const stopping = handle.current.stop().then(() => { stopped = true; });
+  await act(async () => {});
+  assert.equal(stopped, false, "resolved before the outro finished");
+  assert.equal(finishes, 0, "onFinish ran before the outro finished");
+
+  await view.frame();
+  await stopping;
+  assert.equal(stopped, true);
+  assert.equal(finishes, 1);
+
+  await view.unmount();
+  assert.equal(finishes, 1, "onFinish ran again on unmount");
+});
+
+test("onFinish does not run when a running spinner is unmounted or rebuilt", async () => {
+  const { factory } = outroFactory();
+  const view     = renderSpinner();
+  let finishes   = 0;
+  const onFinish = () => { finishes++; };
+
+  await view.render({ type: "indeterminate", animation: factory, onFinish });
+  await view.frame();
+  await view.render({ type: "indeterminate", animation: factory, onFinish, periodMs: 1000 });
+  await view.unmount();
+
+  assert.equal(finishes, 0);
+});
+
+test("useSpinner handle.stop() resolves at once when nothing is mounted", async () => {
+  const { handle, unmount } = await mountHook({ animation: new MockAnimation(), type: "progress" });
+  await unmount();
+  await handle.stop();
+});
+
+test("show={false} under StrictMode plays one outro and fires onFinish once", async () => {
+  const { StrictMode } = await import("react");
+  const { anims, factory } = outroFactory();
+  const container = makeContainer();
+  const root      = createRoot(container);
+  let finishes    = 0;
+  const render = (show) =>
+    act(async () => {
+      root.render(
+        createElement(StrictMode, null,
+          createElement(Spinner, {
+            show,
+            type:      "indeterminate",
+            animation: factory,
+            onFinish:  () => { finishes++; },
+          }),
+        ),
+      );
+    });
+
+  await render(true);
+  await act(async () => { flushRaf(); });
+  const live = anims.at(-1);
+  await render(false);
+  await act(async () => { flushRaf(); });
+
+  assert.equal(container.firstChild, null, "host still there after the outro");
+  assert.equal(live.calls.filter((c) => c === "exit").length, 1, "expected exactly one outro");
+  assert.equal(finishes, 1, "onFinish should run once");
+
+  await act(async () => { root.unmount(); });
+  container.remove();
+});

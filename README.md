@@ -19,7 +19,7 @@ patterns, each shown with the complete component it runs.
 npm install 3d-spinner-react 3d-spinner react
 ```
 
-`3d-spinner` (1.x) and `react` (18+) are peer dependencies.
+`3d-spinner` (1.1 or later) and `react` (18+) are peer dependencies.
 
 ## Screenshots
 
@@ -126,22 +126,58 @@ are built, plus custom animations, shapes, motion paths, and rendering backends.
 
 ## Quick start
 
-An indeterminate spinner runs until you unmount it. Give the container a width
+An indeterminate spinner runs until you hide it. Give the container a width
 and height - the canvas fills that box.
 
 ```tsx
 import { Spinner } from "3d-spinner-react";
 import { SpinAnimation } from "3d-spinner/animations/spin";
 
-function Loading() {
+function Loading({ loading }: { loading: boolean }) {
   return (
     <Spinner
+      show={loading}
       type="indeterminate"
       animation={() => new SpinAnimation({ color: "#3b82f6" })}
       style={{ width: 120, height: 120 }}
     />
   );
 }
+```
+
+When `show` turns `false`, the spinner plays its outro and then removes itself.
+
+## Ending with the outro
+
+Unmounting a spinner stops it at once, which is what you want for a fast page
+transition but looks abrupt otherwise. To let it finish gracefully, keep
+`<Spinner>` rendered and switch `show` instead:
+
+| You write | What happens |
+| --- | --- |
+| `{loading && <Spinner ... />}` | The spinner vanishes the moment `loading` turns false. |
+| `<Spinner show={loading} ... />` | The outro plays first, then the host `div` is removed. |
+
+`onFinish` runs when the outro has finished, just before the `div` is removed,
+so you can move on only after the animation ends. It also runs when a progress
+spinner reaches `1` and its finale has played:
+
+```tsx
+<Spinner
+  progress={progress}
+  animation={() => chargedOrb().animation}
+  onFinish={() => navigate("/results")}
+  style={{ width: 240, height: 240 }}
+/>
+```
+
+Showing it again mounts a fresh spinner with its intro. With the hook, you
+remove the element yourself, so wait for the outro with the promise that
+`stop()` returns:
+
+```tsx
+await spinner.stop(); // resolves once the outro has finished
+setVisible(false);
 ```
 
 ## Reporting progress
@@ -266,7 +302,9 @@ Mounts a spinner into `targetRef.current` and keeps it in sync. Returns a
 | `loop` | `"bounce" \| "restart"` | Loop style (indeterminate mode). Default `"bounce"`. |
 | `periodMs` | `number` | Ms for one sweep (indeterminate mode). Default `2000`. |
 | `ariaLabel` | `string` | Accessible name of the spinner's progress bar. Default `"Loading"`. |
+| `onFinish` | `() => void` | Runs when the spinner stops animating on its own: its outro finished, it was stopped before its intro, or it could not start. Not on unmount or rebuild. |
 | `deps` | `DependencyList` | Extra rebuild triggers for values captured in an `animation` factory. Default `[]`. |
+| `show` | `boolean` | `<Spinner>` only. `false` plays the outro, then removes the host `div`; `true` again mounts a fresh spinner. Default `true`. |
 
 Structural options (`type`, `loop`, `periodMs`, `timeoutMs`, `until`, `ariaLabel`)
 rebuild the spinner automatically when they change. `progress` is applied without
@@ -280,7 +318,7 @@ prop on `<Spinner>` goes on the host `div` like any other `div` attribute.
 | Method | Description |
 | --- | --- |
 | `setProgress(target)` | Advance progress toward `target` (`0..1`). No-op when indeterminate. |
-| `stop()` | Play the outro, then stop. Keeps the element. |
+| `stop()` | Play the outro, then stop. Keeps the element. Returns a promise that resolves once the outro has finished (at once if already stopped). |
 | `destroy()` | Stop now and remove the element. Called automatically on unmount. |
 
 ## Requirements

@@ -12,8 +12,12 @@ import {
 export interface SpinnerHandle {
   /** Advance progress toward `target` (`0..1`). No-op for an indeterminate spinner. */
   setProgress(target: number): void;
-  /** Play the outro, then stop animating. Keeps the injected element. */
-  stop(): void;
+  /**
+   * Play the outro, then stop animating. Keeps the injected element. Resolves
+   * once the outro has finished, so `await handle.stop()` before removing the
+   * element; resolves at once if the spinner already stopped or is not mounted.
+   */
+  stop(): Promise<void>;
   /** Stop immediately and remove the injected element. */
   destroy(): void;
 }
@@ -31,6 +35,9 @@ export interface SpinnerHandle {
  * Prefer an `animation` factory (`() => new SpinAnimation()`) so each (re)mount
  * gets a fresh instance - this is what makes the hook safe under React
  * StrictMode, which mounts, unmounts, then mounts again.
+ *
+ * Unmounting stops the spinner at once. To play the outro first, `await
+ * handle.stop()` (or wait for `onFinish`) and remove the element afterwards.
  *
  * @param targetRef Ref to the element the spinner mounts into.
  * @param config Declarative spinner configuration.
@@ -58,8 +65,13 @@ export function useSpinner<T extends HTMLElement>(
     const animation = resolveAnimation(current.animation);
     const spinner = createSpinner(target, buildSpinnerOptions(current, animation));
     spinnerRef.current = spinner;
+    let mounted = true;
+    void spinner.finished.then(() => {
+      if (mounted) configRef.current.onFinish?.();
+    });
 
     return () => {
+      mounted = false;
       spinner.destroy();
       spinnerRef.current = null;
     };
@@ -78,7 +90,12 @@ export function useSpinner<T extends HTMLElement>(
   return useMemo<SpinnerHandle>(
     () => ({
       setProgress: (target) => spinnerRef.current?.setProgress(target),
-      stop: () => spinnerRef.current?.stop(),
+      stop: () => {
+        const spinner = spinnerRef.current;
+        if (!spinner) return Promise.resolve();
+        spinner.stop();
+        return spinner.finished;
+      },
       destroy: () => spinnerRef.current?.destroy(),
     }),
     [],
