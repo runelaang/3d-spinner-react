@@ -161,21 +161,28 @@ test("useSpinner — setProgress, stop, destroy do not throw", async () => {
 });
 
 test("useSpinner — changing type rebuilds the spinner (destroy + new mount)", async () => {
-  const anim = new MockAnimation();
-  const { rerender, unmount } = await mountHook({ animation: anim, type: "progress" });
+  // 3d-spinner 1.0 rejects remounting an instance, so a rebuild needs a factory.
+  const anims   = [];
+  const factory = () => {
+    const anim = new MockAnimation();
+    anims.push(anim);
+    return anim;
+  };
+  const count = (call) => anims.flatMap((a) => a.calls).filter((c) => c === call).length;
+  const { rerender, unmount } = await mountHook({ animation: factory, type: "progress" });
 
-  const mountsBefore  = anim.calls.filter((c) => c === "mount").length;
-  const destroyBefore = anim.calls.filter((c) => c === "destroy").length;
+  const mountsBefore  = count("mount");
+  const destroyBefore = count("destroy");
 
-  await rerender({ animation: anim, type: "indeterminate" });
+  await rerender({ animation: factory, type: "indeterminate" });
 
   assert.equal(
-    anim.calls.filter((c) => c === "destroy").length,
+    count("destroy"),
     destroyBefore + 1,
     "old spinner was not destroyed on type change",
   );
   assert.equal(
-    anim.calls.filter((c) => c === "mount").length,
+    count("mount"),
     mountsBefore + 1,
     "new spinner was not mounted on type change",
   );

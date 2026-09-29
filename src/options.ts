@@ -13,7 +13,8 @@ export interface SpinnerConfig {
    * The visual to play. Prefer a **factory** (`() => new SpinAnimation()`): a
    * fresh instance is built on every (re)mount, which is required for React
    * StrictMode and for structural prop changes. A bare instance is supported
-   * but is destroyed on unmount and cannot be reused.
+   * but is destroyed on unmount and cannot be reused: `3d-spinner` throws when
+   * the same instance is mounted a second time.
    */
   animation: AnimationSource;
   /** Spinner mode. `"progress"` (default) is caller-driven; `"indeterminate"` self-drives. */
@@ -21,13 +22,15 @@ export interface SpinnerConfig {
   /** Progress `0..1` for a `progress` spinner. Reactive: updates call `setProgress`. */
   progress?: number;
   /** Auto-complete a `progress` spinner after this many milliseconds. */
-  timeout?: number;
+  timeoutMs?: number;
   /** Auto-complete a `progress` spinner at this time. If both are set, the earlier wins. */
   until?: Date;
   /** `"bounce"` (default) or `"restart"` loop style for an `indeterminate` spinner. */
   loop?: "bounce" | "restart";
   /** Milliseconds for one sweep of an `indeterminate` spinner. Default `2000`. */
   periodMs?: number;
+  /** Accessible name of the spinner's progress bar for assistive technology. Default `"Loading"`. */
+  ariaLabel?: string;
 }
 
 /** Resolve an {@link AnimationSource} to a concrete instance, calling the factory if given one. */
@@ -49,11 +52,13 @@ export function buildSpinnerOptions(
     const options: SpinnerOptions = { type: "indeterminate", animation };
     if (config.loop !== undefined) options.loop = config.loop;
     if (config.periodMs !== undefined) options.periodMs = config.periodMs;
+    if (config.ariaLabel !== undefined) options.ariaLabel = config.ariaLabel;
     return options;
   }
   const options: SpinnerOptions = { type: "progress", animation };
   if (config.progress !== undefined) options.progress = config.progress;
-  if (config.timeout !== undefined) options.timeout = config.timeout;
+  if (config.timeoutMs !== undefined) options.timeoutMs = config.timeoutMs;
   if (config.until !== undefined) options.until = config.until;
+  if (config.ariaLabel !== undefined) options.ariaLabel = config.ariaLabel;
   return options;
 }

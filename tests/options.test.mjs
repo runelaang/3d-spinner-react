@@ -28,12 +28,12 @@ test("progress is the default mode", () => {
 test("progress options pass through, indeterminate-only options are dropped", () => {
   const until = new Date();
   const options = buildSpinnerOptions(
-    { animation: fakeAnimation, progress: 0.4, timeout: 5000, until, loop: "restart", periodMs: 1000 },
+    { animation: fakeAnimation, progress: 0.4, timeoutMs: 5000, until, loop: "restart", periodMs: 1000 },
     fakeAnimation,
   );
   assert.equal(options.type, "progress");
   assert.equal(options.progress, 0.4);
-  assert.equal(options.timeout, 5000);
+  assert.equal(options.timeoutMs, 5000);
   assert.equal(options.until, until);
   assert.equal("loop" in options, false);
   assert.equal("periodMs" in options, false);
@@ -41,14 +41,14 @@ test("progress options pass through, indeterminate-only options are dropped", ()
 
 test("indeterminate options pass through, progress-only options are dropped", () => {
   const options = buildSpinnerOptions(
-    { animation: fakeAnimation, type: "indeterminate", loop: "bounce", periodMs: 1500, progress: 0.5, timeout: 9 },
+    { animation: fakeAnimation, type: "indeterminate", loop: "bounce", periodMs: 1500, progress: 0.5, timeoutMs: 9 },
     fakeAnimation,
   );
   assert.equal(options.type, "indeterminate");
   assert.equal(options.loop, "bounce");
   assert.equal(options.periodMs, 1500);
   assert.equal("progress" in options, false);
-  assert.equal("timeout" in options, false);
+  assert.equal("timeoutMs" in options, false);
   assert.equal("until" in options, false);
 });
 

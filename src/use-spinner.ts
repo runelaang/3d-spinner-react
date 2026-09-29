@@ -23,9 +23,10 @@ export interface SpinnerHandle {
  * with React state.
  *
  * The spinner is rebuilt whenever a structural option changes (`type`, `loop`,
- * `periodMs`, `timeout`, `until`) or any value in `deps` changes; `deps` is for
- * values captured inside an `animation` factory (a `color` from props, say) that
- * the hook cannot see on its own. `progress` is applied without a rebuild.
+ * `periodMs`, `timeoutMs`, `until`, `ariaLabel`) or any value in `deps`
+ * changes; `deps` is for values captured inside an `animation` factory (a
+ * `color` from props, say) that the hook cannot see on its own. `progress` is
+ * applied without a rebuild.
  *
  * Prefer an `animation` factory (`() => new SpinAnimation()`) so each (re)mount
  * gets a fresh instance - this is what makes the hook safe under React
@@ -46,7 +47,7 @@ export function useSpinner<T extends HTMLElement>(
 
   const spinnerRef = useRef<Spinner | null>(null);
 
-  const { type, loop, periodMs, timeout } = config;
+  const { type, loop, periodMs, timeoutMs, ariaLabel } = config;
   const untilTime = config.until?.getTime();
 
   useEffect(() => {
@@ -65,7 +66,7 @@ export function useSpinner<T extends HTMLElement>(
     // Rebuild on structural changes and caller-provided deps. `animation` is read
     // from a ref so an inline factory's changing identity does not churn rebuilds.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, loop, periodMs, timeout, untilTime, ...deps]);
+  }, [type, loop, periodMs, timeoutMs, untilTime, ariaLabel, ...deps]);
 
   const progress = config.progress;
   useEffect(() => {

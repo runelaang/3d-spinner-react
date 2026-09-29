@@ -44,10 +44,11 @@ export const Spinner = forwardRef<SpinnerHandle, SpinnerProps>(function Spinner(
     animation,
     type,
     progress,
-    timeout,
+    timeoutMs,
     until,
     loop,
     periodMs,
+    ariaLabel,
     deps = [],
     style,
     ...rest
@@ -56,7 +57,7 @@ export const Spinner = forwardRef<SpinnerHandle, SpinnerProps>(function Spinner(
   const containerRef = useRef<HTMLDivElement>(null);
   const handle = useSpinner(
     containerRef,
-    { animation, type, progress, timeout, until, loop, periodMs },
+    { animation, type, progress, timeoutMs, until, loop, periodMs, ariaLabel },
     deps,
   );
   useImperativeHandle(ref, () => handle, [handle]);
