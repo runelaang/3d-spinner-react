@@ -1,0 +1,29 @@
+/* Additions to examples.css (copied from the 3d-spinner demo) for cards with their own controls. */
+
+.demo-stage {
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.demo-stage p {
+  margin: 0;
+  color: var(--control-text);
+}
+
+select {
+  padding: 0.4rem 0.6rem;
+  color: var(--control-text);
+  background: var(--control-bg);
+  border: 1px solid var(--control-border);
+  border-radius: 6px;
+}

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3d-spinner-react demo</title>
+  <script>
+    // Apply the stored color scheme before the first paint (same key as the 3d-spinner demo).
+    const mode = localStorage.getItem("3d-spinner-examples-theme");
+    if (mode === "light" || mode === "dark") document.documentElement.setAttribute("data-theme", mode);
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>
