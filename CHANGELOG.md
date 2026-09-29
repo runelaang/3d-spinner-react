@@ -2,6 +2,28 @@
 
 Notable changes, newest first. Versions before 1.0.0 are described in the git history.
 
+## 1.1.0
+
+Requires `3d-spinner` 1.1 or later.
+
+### Added
+
+- `show` prop on `<Spinner>`: turning it `false` plays the outro, then removes the host `div`;
+  turning it `true` again mounts a fresh spinner. Unmounting still stops the spinner at once.
+- `onFinish` option: runs when the spinner stops animating on its own (its outro finished, it was
+  stopped before its intro, or it could not start), not on unmount or rebuild.
+- `SpinnerHandle.stop()` returns a promise that resolves once the outro has finished, so hook
+  users can `await spinner.stop()` before removing their element.
+
+### Changed
+
+- The `3d-spinner` peer dependency is `^1.1.0` (was `^1.0.0`), for its new `spinner.finished`.
+
+### Internal
+
+- Lifecycle tests for `show`, `onFinish`, and the `stop()` promise, including under StrictMode.
+- The demo's prefab cards play the outro on Stop, and a new card shows `show` and `onFinish`.
+
 ## 1.0.1
 
 ### Added
