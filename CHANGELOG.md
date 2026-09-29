@@ -2,6 +2,18 @@
 
 Notable changes, newest first. Versions before 1.0.0 are described in the git history.
 
+## 1.0.1
+
+### Added
+
+- A live demo at https://runelaang.github.io/3d-spinner-react/, linked from the README: the
+  prefabs and common React patterns, each with the complete component it runs.
+
+### Internal
+
+- The demo is a Vite app in `demo/` with its own `package.json`, so the package gains no
+  dependencies. GitHub Pages deploys it from `main` on every release.
+
 ## 1.0.0
 
 Requires `3d-spinner` 1.x. The public interface is stable from this version on and follows
