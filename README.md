@@ -10,6 +10,9 @@ canvas. You get a `<Spinner>` component and a `useSpinner` hook for mounting,
 cleanup, and progress. Import the animations and prefabs you need from
 `3d-spinner`; only what you import ends up in your bundle.
 
+**[Live demo](https://runelaang.github.io/3d-spinner-react/)** - the prefabs and common React
+patterns, each shown with the complete component it runs.
+
 ## Install
 
 ```sh
@@ -295,6 +298,14 @@ npm install
 npm run build      # compile src/ to dist/ (ESM + type declarations)
 npm run typecheck  # type-check without emitting
 npm test           # build, then run the unit tests
+```
+
+The live demo is a separate Vite app in `demo/` that runs the source in `src/`:
+
+```sh
+cd demo
+npm install
+npm run dev        # http://localhost:5173/3d-spinner-react/
 ```
 
 ## License
